@@ -1,14 +1,48 @@
+''' 
+    Using the ZED ROS 2 Wrapper that can subscribe to a NavSatFix topic and 
+    fuse GNSS data information with Positional Tracking information 
+    to obtain a precise robot localization referred to Earth coordinates. 
+    To enable GNSS fusion set the parameter gnss_fusion.gnss_fusion_enabled to true. 
+    The services toLL and fromLL can be used to convert Latitude/Longitude coordinates to robot map coordinates. 
+'''
+
+''' 
+Nodes:
+    ublox GPS from /dev/ttyACM0 (needs to publish to sensor_msgs/NavSatFix)
+    zed visual odom \odom 
+'''
+
+
+''' 
+When running launch script, specify the GPS device path via the command line (default path is set to: '/dev/ttyACM0')
+ros2 launch package gnss_test.launch.py gps_device:=<DEVICE_PATH> 
+''' 
+
 # import relevant libraries
 import launch
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo, PushRosNamespace, SetParameter
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-
+from launch.actions import WaitForMessage
 
 def generate_launch_description():
     return LaunchDescription([
         
+        # Wait for the GPS data to be available
+        WaitForMessage(
+            topic='/gps/fix',
+            msg_type='sensor_msgs/NavSatFix',
+            timeout=10.0,  # Timeout in seconds
+        ),
+        
+        # Make GPS device path configurable
+        DeclareLaunchArgument(
+            'gps_device', 
+            default_value='/dev/ttyACM0',  # Default value if not specified
+            description='GPS device path'
+        ),
+
         # set gnss_fusion to enabled
         DeclareLaunchArgument(
             'gnss_fusion_enabled', 
@@ -33,7 +67,7 @@ def generate_launch_description():
             ],
         ),
         
-        # GPS node (ublox GPS connected to /dev/ttyACM0)
+        # GPS node (ublox GPS with configurable device path)
         Node(
             package='ublox_gps',
             executable='ublox_driver',
@@ -41,7 +75,7 @@ def generate_launch_description():
             namespace='',
             output='screen',
             parameters=[{
-                'device': '/dev/ttyACM0',  # GPS device
+                'device': LaunchConfiguration('gps_device'),  # Use the configurable GPS device path
                 'frame_id': 'gps',  # Frame of reference for GPS
             }],
             remappings=[
@@ -49,7 +83,7 @@ def generate_launch_description():
             ],
         ),
         
-        # Service for converting Lat/Lon to robot map coordinates (optional)
+        # Service for converting Lat/Lon to robot map coordinates
         Node(
             package='zed_ros2_wrapper',
             executable='gnss_to_map_node',
@@ -63,7 +97,7 @@ def generate_launch_description():
                 ('/gnss_to_map/latlon', '/gnss_latlon'),  # Lat/Lon to map conversion
             ],
         ),
-        
+
         # Log the GNSS fusion status
         LogInfo(
             condition=launch.conditions.IfCondition(LaunchConfiguration('gnss_fusion_enabled')),
