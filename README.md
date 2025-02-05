@@ -50,7 +50,7 @@ xgps
 1. Open N terminals.
 2. `cd ~/ros2_ws` in each terminal.
 3. run `source /opt/ros/humble/setup.zsh` && `source install/setup.zsh` in each terminal.
-4. Terminal 1: `ros2 launch package_name sensors.launch.py`
+4. Terminal 1: `ros2 launch ublox_gps gnss_fusion.launch.py`
 5. Terminal 2: `ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zed2i`
 6. Terminal N: `ros2 launch package_name file.launch.py`
    
