@@ -4,17 +4,13 @@
     to obtain a precise robot localization referred to Earth coordinates. 
     To enable GNSS fusion set the parameter gnss_fusion.gnss_fusion_enabled to true. 
     The services toLL and fromLL can be used to convert Latitude/Longitude coordinates to robot map coordinates. 
-'''
-
-''' 
+ 
 Nodes:
     ublox GPS from /dev/ttyACM0 (needs to publish to sensor_msgs/NavSatFix)
     zed visual odom \odom 
-'''
 
-
-''' 
 When running launch script, specify the GPS device path via the command line (default path is set to: '/dev/ttyACM0')
+
 ros2 launch package gnss_test.launch.py gps_device:=<DEVICE_PATH> 
 ''' 
 
