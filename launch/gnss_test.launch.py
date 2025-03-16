@@ -113,24 +113,45 @@ def generate_launch_description():
             ],
         ),
         
-        # Velodyne PointCloud to LaserScan conversion
+        # # Velodyne PointCloud to LaserScan conversion
+        # Node(
+        #     package='pointcloud_to_laserscan',
+        #     executable='pointcloud_to_laserscan_node',
+        #     name='pointcloud_to_laserscan',
+        #     namespace='',
+        #     output='screen',
+        #     parameters=[{
+        #         'frame_id': 'velodyne',  # The frame of reference
+        #         'scan_height': 1.5,       # Height of the laser scan, adjust as needed
+        #         'max_range': 35.0,        # Maximum range of the LaserScan
+        #         'min_range': 1.5,         # Minimum range of the LaserScan
+        #         'angle_min': -3.14,       # Start angle for the scan
+        #         'angle_max': 3.14,        # End angle for the scan
+        #     }],
+        #     remappings=[
+        #         ('/velodyne/points', '/velodyne_points'),  # PointCloud2 topic from Velodyne driver
+        #         ('/scan', '/velodyne/scan')  # LaserScan topic
+        #     ],
+        # ),
+
+        # PointCloud2 to OccupancyGrid conversion
         Node(
-            package='pointcloud_to_laserscan',
-            executable='pointcloud_to_laserscan_node',
-            name='pointcloud_to_laserscan',
+            package='pointcloud_to_occupancy_grid',
+            executable='pointcloud_to_occupancy_grid_node',
+            name='pointcloud_to_occupancy_grid',
             namespace='',
             output='screen',
             parameters=[{
-                'frame_id': 'velodyne',  # The frame of reference
-                'scan_height': 1.5,       # Height of the laser scan, adjust as needed
-                'max_range': 35.0,        # Maximum range of the LaserScan
-                'min_range': 1.5,         # Minimum range of the LaserScan
-                'angle_min': -3.14,       # Start angle for the scan
-                'angle_max': 3.14,        # End angle for the scan
+                'frame_id': 'velodyne',  # The frame of reference for the LiDAR data
+                'resolution': 0.1,  # Resolution of the occupancy grid in meters
+                'size_x': 100,  # Size of the grid in meters
+                'size_y': 100,  # Size of the grid in meters
+                'max_range': 35.0,  # Maximum range of the LiDAR for occupancy grid
+                'min_range': 1.5,  # Minimum range of the LiDAR
             }],
             remappings=[
-                ('/velodyne/points', '/velodyne_points'),  # PointCloud2 topic from Velodyne driver
-                ('/scan', '/velodyne/scan')  # LaserScan topic
+                ('/velodyne_points', '/velodyne/points'),  # Subscribe to the Velodyne PointCloud2 data
+                ('/occupancy_grid', '/map')  # Publish OccupancyGrid to the /map topic
             ],
         ),
 
