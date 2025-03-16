@@ -30,19 +30,25 @@ $GPGSV,1,1,00,0*65
 $GNRMC,082019.00,V,,,,,,,230623,,,N,V*1D
 ```
 
-To start up the gpsd daemon (new GPS):
+To start up the gpsd daemon (new GPS reads from ACM0):
 ```
 gpsd -nG -s 115200 /dev/ttyACM0
 ```
 
-To boot up the old GPS:
+To boot up the old GPS (reads from USB0):
 ```
 sudo gpsd -N -D 4 -n /dev/ttyUSB0
 ```
 
-Run
+Run:
 ```
 cgps
+```
+
+Wait for it to settle with 3-4 satellite signals and fixes lat and lon
+Then run
+```
+ros2 launch ublox_gps gnss_test.launch.py
 ```
 
 By default, `gpsd` runs as a **systemd service** (`systemctl start gpsd`), meaning it’s managed automatically as a **daemon**. However, for **USB GNSS modules**, this setup can be unreliable—sometimes the service starts before the module is detected, or it may not restart properly.
