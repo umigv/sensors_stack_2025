@@ -30,10 +30,21 @@ $GPGSV,1,1,00,0*65
 $GNRMC,082019.00,V,,,,,,,230623,,,N,V*1D
 ```
 
-To start up the gpsd daemon:
+To start up the gpsd daemon (new GPS):
 ```
 gpsd -nG -s 115200 /dev/ttyACM0
 ```
+
+To boot up the old GPS:
+```
+sudo gpsd -N -D 4 -n /dev/ttyUSB0
+```
+
+Run
+```
+cgps
+```
+
 By default, `gpsd` runs as a **systemd service** (`systemctl start gpsd`), meaning it’s managed automatically as a **daemon**. However, for **USB GNSS modules**, this setup can be unreliable—sometimes the service starts before the module is detected, or it may not restart properly.
 
 To avoid these issues, it’s better to start the **daemon** manually instead of relying on `systemd`. Since we still want `gpsd` to start at boot, we can set up a **cron job** that runs the command automatically when the system starts.
