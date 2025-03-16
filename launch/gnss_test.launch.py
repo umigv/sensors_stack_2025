@@ -142,12 +142,12 @@ def generate_launch_description():
             namespace='',
             output='screen',
             parameters=[{
-                'frame_id': 'velodyne',  # The frame of reference for the LiDAR data
+                'frame_id': 'velodyne',
                 'resolution': 0.1,  # Resolution of the occupancy grid in meters
                 'size_x': 100,  # Size of the grid in meters
                 'size_y': 100,  # Size of the grid in meters
-                'max_range': 35.0,  # Maximum range of the LiDAR for occupancy grid
-                'min_range': 1.5,  # Minimum range of the LiDAR
+                'max_range': 35.0,  # Maximum range
+                'min_range': 1.5,  # Minimum range 
             }],
             remappings=[
                 ('/velodyne_points', '/velodyne/points'),  # Subscribe to the Velodyne PointCloud2 data
@@ -165,5 +165,47 @@ def generate_launch_description():
         LogInfo(
             condition=launch.conditions.IfCondition(launch.substitutions.LaunchConfiguration('gnss_fusion_enabled').perform() == 'false'),
             msg="GNSS Fusion is disabled. Only visual odometry will be used for localization."
+        ),
+
+        # Launch the slam_toolbox node for SLAM mapping
+        Node(
+            package='slam_toolbox',
+            executable='sync_slam_toolbox_node',
+            name='slam_toolbox',
+            namespace='',
+            output='screen',
+            parameters=[{
+                'solver_plugin': 'solver_plugins::CeresSolver',
+                'ceres_linear_solver': 'SPARSE_NORMAL_CHOLESKY',
+                'ceres_preconditioner': 'SCHUR_JACOBI',
+                'ceres_trust_strategy': 'LEVENBERG_MARQUARDT',
+                'ceres_dogleg_type': 'TRADITIONAL_DOGLEG',
+                'ceres_loss_function': None,
+                'odom_frame': 'odom',
+                'map_frame': 'map',
+                'base_frame': 'base_footprint',
+                'scan_topic': '/scan',  # Assuming the LiDAR scan data is being published to '/scan'
+                'use_map_saver': True,
+                'mode': 'mapping',
+                'resolution': 0.05,
+                'min_laser_range': 0.0,  # for rastering images
+                'max_laser_range': 20.0,  # for rastering images
+                'map_update_interval': 5.0,
+                'minimum_time_interval': 0.5,
+                'throttle_scans': 1,
+                'transform_publish_period': 0.02,  # if 0 never publishes odometry
+                'transform_timeout': 0.2,
+                'tf_buffer_duration': 10.0,
+                'scan_buffer_size': 10,
+                'scan_buffer_maximum_scan_distance': 10.0,
+                'use_scan_matching': True,
+                'do_loop_closing': True,
+                'loop_search_maximum_distance': 3.0,
+                'loop_match_minimum_chain_size': 10,
+                'debug_logging': False,
+            }],
+            remappings=[
+                ('/scan', '/scan')  # LiDAR scan data is typically published to the '/scan' topic
+            ],
         ),
     ])
