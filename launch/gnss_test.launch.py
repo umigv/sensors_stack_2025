@@ -103,13 +103,13 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'frame_id': 'velodyne',
-                'device_ip': '192.168.1.201',  # Replace with the actual IP address of your Velodyne LiDAR
-                'scan_angle_min': -2.0,  # Set the scan angles as per your setup
+                'device_ip': '192.168.1.202',
+                'scan_angle_min': -2.0,
                 'scan_angle_max': 2.0,
-                'scan_frequency': 10.0,  # Adjust the scan frequency based on your setup
+                'scan_frequency': 10.0,
             }],
             remappings=[
-                ('/velodyne_points', '/velodyne/points')  # This is the default topic for PointCloud2 data
+                ('/velodyne_points', '/velodyne/points')  # default topic for PointCloud2 data
             ],
         ),
         
@@ -123,8 +123,8 @@ def generate_launch_description():
             parameters=[{
                 'frame_id': 'velodyne',  # The frame of reference
                 'scan_height': 1.5,       # Height of the laser scan, adjust as needed
-                'max_range': 30.0,        # Maximum range of the LaserScan
-                'min_range': 0.5,         # Minimum range of the LaserScan
+                'max_range': 35.0,        # Maximum range of the LaserScan
+                'min_range': 1.5,         # Minimum range of the LaserScan
                 'angle_min': -3.14,       # Start angle for the scan
                 'angle_max': 3.14,        # End angle for the scan
             }],
