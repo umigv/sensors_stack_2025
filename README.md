@@ -44,9 +44,6 @@ Then we can check if the GPS and gpsd is working using this command that display
 xgps
 ```
 
-⚠️ **Warning:** It may take several minutes for the GNSS module to acquire a GPS fix, especially in areas with poor satellite visibility. Ensure you are in an open area with a clear view of the sky for faster results. On cold start (No prior data), it can take around **3-5 minutes** in open areas (longer in poor conditions).
-
-
 To boot up the old GPS (reads from USB0):
 ```
 sudo gpsd -N -D 4 -n /dev/ttyUSB0
@@ -62,6 +59,8 @@ Then run:
 ```
 ros2 launch ublox_gps gnss_test.launch.py
 ```
+
+⚠️ **Warning:** It may take several minutes for the GNSS module to acquire a GPS fix, especially in areas with poor satellite visibility. Ensure you are in an open area with a clear view of the sky for faster results. On cold start (No prior data), it can take around **3-5 minutes** in open areas (longer in poor conditions).
 
 ## Running the Sensors Stack
 1. Open 2 terminals.
