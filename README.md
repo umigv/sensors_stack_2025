@@ -46,7 +46,7 @@ cgps
 ```
 
 Wait for it to settle with 3-4 satellite signals and fixes lat and lon
-Then run
+Then run:
 ```
 ros2 launch ublox_gps gnss_test.launch.py
 ```
