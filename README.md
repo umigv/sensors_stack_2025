@@ -30,7 +30,7 @@ $GPGSV,1,1,00,0*65
 $GNRMC,082019.00,V,,,,,,,230623,,,N,V*1D
 ```
 
-To start up the gpsd daemon (new GPS reads from ACM0):
+To boot up the new GPS (reads from ACM0):
 ```
 gpsd -nG -s 115200 /dev/ttyACM0
 ```
