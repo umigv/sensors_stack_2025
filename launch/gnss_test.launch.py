@@ -113,26 +113,26 @@ def generate_launch_description():
             ],
         ),
         
-        # # Velodyne PointCloud to LaserScan conversion
-        # Node(
-        #     package='pointcloud_to_laserscan',
-        #     executable='pointcloud_to_laserscan_node',
-        #     name='pointcloud_to_laserscan',
-        #     namespace='',
-        #     output='screen',
-        #     parameters=[{
-        #         'frame_id': 'velodyne',  # The frame of reference
-        #         'scan_height': 1.5,       # Height of the laser scan, adjust as needed
-        #         'max_range': 35.0,        # Maximum range of the LaserScan
-        #         'min_range': 1.5,         # Minimum range of the LaserScan
-        #         'angle_min': -3.14,       # Start angle for the scan
-        #         'angle_max': 3.14,        # End angle for the scan
-        #     }],
-        #     remappings=[
-        #         ('/velodyne/points', '/velodyne_points'),  # PointCloud2 topic from Velodyne driver
-        #         ('/scan', '/velodyne/scan')  # LaserScan topic
-        #     ],
-        # ),
+        # Velodyne PointCloud to LaserScan conversion
+        Node(
+            package='pointcloud_to_laserscan',
+            executable='pointcloud_to_laserscan_node',
+            name='pointcloud_to_laserscan',
+            namespace='',
+            output='screen',
+            parameters=[{
+                'frame_id': 'velodyne',  # The frame of reference
+                'scan_height': 1.5,       # Height of the laser scan, adjust as needed
+                'max_range': 35.0,        # Maximum range of the LaserScan
+                'min_range': 1.5,         # Minimum range of the LaserScan
+                'angle_min': -3.14,       # Start angle for the scan
+                'angle_max': 3.14,        # End angle for the scan
+            }],
+            remappings=[
+                ('/velodyne/points', '/velodyne_points'),  # PointCloud2 topic from Velodyne driver
+                ('/scan', '/velodyne/scan')  # LaserScan topic
+            ],
+        ),
 
         # PointCloud2 to OccupancyGrid conversion
         Node(
@@ -143,9 +143,9 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'frame_id': 'velodyne',
-                'resolution': 0.1,  # Resolution of the occupancy grid in meters
-                'size_x': 100,  # Size of the grid in meters
-                'size_y': 100,  # Size of the grid in meters
+                'resolution': 0.05,  # Resolution of the occupancy grid in meters
+                'size_x': 76,  # Size of the grid in meters
+                'size_y': 155,  # Size of the grid in meters
                 'max_range': 35.0,  # Maximum range
                 'min_range': 1.5,  # Minimum range 
             }],
@@ -169,43 +169,43 @@ def generate_launch_description():
 
         # Launch the slam_toolbox node for SLAM mapping
         Node(
-            package='slam_toolbox',
-            executable='sync_slam_toolbox_node',
-            name='slam_toolbox',
-            namespace='',
-            output='screen',
-            parameters=[{
-                'solver_plugin': 'solver_plugins::CeresSolver',
-                'ceres_linear_solver': 'SPARSE_NORMAL_CHOLESKY',
-                'ceres_preconditioner': 'SCHUR_JACOBI',
-                'ceres_trust_strategy': 'LEVENBERG_MARQUARDT',
-                'ceres_dogleg_type': 'TRADITIONAL_DOGLEG',
-                'ceres_loss_function': None,
-                'odom_frame': 'odom',
-                'map_frame': 'map',
-                'base_frame': 'base_footprint',
-                'scan_topic': '/scan',  # Assuming the LiDAR scan data is being published to '/scan'
-                'use_map_saver': True,
-                'mode': 'mapping',
-                'resolution': 0.05,
-                'min_laser_range': 0.0,  # for rastering images
-                'max_laser_range': 20.0,  # for rastering images
-                'map_update_interval': 5.0,
-                'minimum_time_interval': 0.5,
-                'throttle_scans': 1,
-                'transform_publish_period': 0.02,  # if 0 never publishes odometry
-                'transform_timeout': 0.2,
-                'tf_buffer_duration': 10.0,
-                'scan_buffer_size': 10,
-                'scan_buffer_maximum_scan_distance': 10.0,
-                'use_scan_matching': True,
-                'do_loop_closing': True,
-                'loop_search_maximum_distance': 3.0,
-                'loop_match_minimum_chain_size': 10,
-                'debug_logging': False,
-            }],
-            remappings=[
-                ('/scan', '/scan')  # LiDAR scan data is typically published to the '/scan' topic
-            ],
-        ),
-    ])
+        package='slam_toolbox',
+        executable='sync_slam_toolbox_node',
+        name='slam_toolbox',
+        namespace='',
+        output='screen',
+        parameters=[{
+            'solver_plugin': 'solver_plugins::CeresSolver',
+            'ceres_linear_solver': 'SPARSE_NORMAL_CHOLESKY',
+            'ceres_preconditioner': 'SCHUR_JACOBI',
+            'ceres_trust_strategy': 'LEVENBERG_MARQUARDT',
+            'ceres_dogleg_type': 'TRADITIONAL_DOGLEG',
+            'ceres_loss_function': None,
+            'odom_frame': 'odom',
+            'map_frame': 'map',
+            'base_frame': 'base_footprint',
+            'scan_topic': '/scan',  # Assuming the LiDAR scan data is being published to '/scan'
+            'use_map_saver': True,
+            'mode': 'mapping',
+            'map_resolution': 0.05,  # 5cm per grid cell
+            'map_size': [3.8, 7.75],  # 3.8m x 7.75m (760.05m x 1550.05m in the map grid)
+            'max_laser_range': 12.0,  # Match ZED 2i’s reliable range
+            'map_update_interval': 0.066,  # Match ZED 2i’s 15 Hz rate
+            'minimum_time_interval': 0.5,
+            'throttle_scans': 1,
+            'transform_publish_period': 0.02,  # if 0 never publishes odometry
+            'transform_timeout': 0.2,
+            'tf_buffer_duration': 10.0,
+            'scan_buffer_size': 10,
+            'scan_buffer_maximum_scan_distance': 10.0,
+            'use_scan_matching': True,
+            'do_loop_closing': True,
+            'loop_search_maximum_distance': 3.0,
+            'loop_match_minimum_chain_size': 10,
+            'debug_logging': False,
+        }],
+        remappings=[
+            ('/scan', '/scan')  # LiDAR scan data is typically published to the '/scan' topic
+        ],
+    ),
+])
