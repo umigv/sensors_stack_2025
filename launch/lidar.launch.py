@@ -38,6 +38,7 @@ def generate_launch_description():
                 'min_range': 1.5,         # Minimum range of the LaserScan
                 'angle_min': -3.14,       # Start angle for the scan
                 'angle_max': 3.14,        # End angle for the scan
+                'output_qos_reliability': 'reliable', # set QoS to reliable
             }],
             remappings=[
                 ('/velodyne/points', '/velodyne_points'),  # PointCloud2 topic from Velodyne driver
