@@ -15,7 +15,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'frame_id': 'velodyne',
-                'device_ip': '192.168.191.254',
+                'device_ip': '192.168.1.202',
                 'scan_angle_min': -2.0,
                 'scan_angle_max': 2.0,
                 'scan_frequency': 10.0,
@@ -47,45 +47,22 @@ def generate_launch_description():
             ],
         ),
 
-        # # PointCloud2 to OccupancyGrid conversion
-        # Node(
-        #     package='pointcloud_to_occupancy_grid',
-        #     executable='pointcloud_to_occupancy_grid_node',
-        #     name='pointcloud_to_occupancy_grid',
-        #     namespace='',
-        #     output='screen',
-        #     parameters=[{
-        #         'frame_id': 'velodyne',
-        #         'resolution': 0.05,  # Resolution of the occupancy grid in meters
-        #         'size_x': 76,  # Size of the grid in meters
-        #         'size_y': 155,  # Size of the grid in meters
-        #         'max_range': 35.0,  # Maximum range
-        #         'min_range': 1.5,  # Minimum range 
-        #     }],
-        #     remappings=[
-        #         ('/velodyne_points', '/velodyne/points'),  # Subscribe to the Velodyne PointCloud2 data
-        #         ('/occupancy_grid', '/map')  # Publish OccupancyGrid to the /map topic
-        #     ],
-        # ),
-
-          # SLAM Toolbox node for mapping
+        # PointCloud2 to OccupancyGrid conversion
         Node(
             package='slam_toolbox',
-            executable='async_slam_toolbox_node',
-            name='slam_toolbox_node',
-            namespace='',
+            executable='sync_slam_toolbox_node',  # or 'async_slam_toolbox_node' for online async
+            name='slam_toolbox',
             output='screen',
             parameters=[{
-                'map_frame': 'map',
-                'odom_frame': 'odom',
-                'base_frame': 'base_link',
-                'scan_topic': '/velodyne/scan',  # Use the LaserScan topic from Velodyne
-                'transform_tolerance': 0.1,
-                'use_odometry': True,
+                'slam_params_file': '/path/to/your/slam_config.yaml',  # Optional, see below
+                'use_sim_time': False,
+                'resolution': 0.05,
+                'max_laser_range': 35.0,
+                'minimum_time_interval': 0.5,  # reduce to improve update rate
             }],
             remappings=[
-                ('/scan', '/velodyne/scan'),  # Map LaserScan topic
-                ('/map', '/map')  # Publish the map to the /map topic
+                ('scan', '/velodyne/scan'),
+                ('/map', '/map')
             ],
         ),
     ])
