@@ -49,6 +49,7 @@ def generate_launch_description():
 
         # PointCloud2 to OccupancyGrid conversion
         Node(
+<<<<<<< HEAD
             package='slam_toolbox',
             executable='sync_slam_toolbox_node',  # or 'async_slam_toolbox_node' for online async
             name='slam_toolbox',
@@ -63,6 +64,24 @@ def generate_launch_description():
             remappings=[
                 ('scan', '/velodyne/scan'),
                 ('/map', '/map')
+=======
+            package='pointcloud_to_occupancy_grid',
+            executable='pointcloud_to_occupancy_grid_node',
+            name='pointcloud_to_occupancy_grid',
+            namespace='',
+            output='screen',
+            parameters=[{
+                'frame_id': 'velodyne',
+                'resolution': 0.05,  # Resolution of the occupancy grid in meters
+                'size_x': 76,  # Size of the grid in meters
+                'size_y': 155,  # Size of the grid in meters
+                'max_range': 35.0,  # Maximum range
+                'min_range': 1.5,  # Minimum range 
+            }],
+            remappings=[
+                ('/velodyne_points', '/velodyne/points'),  # Subscribe to the Velodyne PointCloud2 data
+                ('/occupancy_grid', '/map')  # Publish OccupancyGrid to the /map topic
+>>>>>>> parent of 9f7b5db (added slam_toolbox node)
             ],
         ),
     ])
